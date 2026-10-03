@@ -40,9 +40,10 @@ export class ReleaseController {
     try {
       const parsed = createReleaseSchema.safeParse(req.body);
       if (!parsed.success) {
+        const issues = parsed.error.issues.map(i => `${i.path.join('.') || 'root'}: ${i.message}`).join('; ');
         return res.status(400).json({
           error: {
-            message: 'Invalid release payload.',
+            message: `Invalid release payload: ${issues}`,
             code: 'VALIDATION_ERROR',
             details: parsed.error.format()
           }
@@ -63,9 +64,10 @@ export class ReleaseController {
       const { releaseId } = req.params;
       const parsed = updateReleaseSchema.safeParse(req.body);
       if (!parsed.success) {
+        const issues = parsed.error.issues.map(i => `${i.path.join('.') || 'root'}: ${i.message}`).join('; ');
         return res.status(400).json({
           error: {
-            message: 'Invalid release update payload.',
+            message: `Invalid release update payload: ${issues}`,
             code: 'VALIDATION_ERROR',
             details: parsed.error.format()
           }

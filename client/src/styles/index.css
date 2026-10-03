@@ -34,6 +34,43 @@
   -webkit-text-fill-color: transparent;
 }
 
+/* Left-to-Right Subtle Wave Motion */
+@keyframes tabSlideLeftRight {
+  0% { transform: translateX(0); }
+  30% { transform: translateX(5px); }
+  60% { transform: translateX(0); }
+  100% { transform: translateX(0); }
+}
+
+.animate-slide-lr {
+  animation: tabSlideLeftRight 3s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+/* Smooth Tab Button Transitions & Shadows */
+.tab-pill-btn {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.tab-pill-btn:hover {
+  transform: translateX(4px) translateY(-1px);
+}
+
+.shadow-saffron-glow {
+  box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.22);
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;

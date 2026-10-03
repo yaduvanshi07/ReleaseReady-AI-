@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   FileText
 } from 'lucide-react';
+import { HorizontalScrollTabs } from '../../components/HorizontalScrollTabs';
 
 export function ReleaseEditor({ initialData = null, onSave, isSubmitting = false }) {
   const [formData, setFormData] = useState({
@@ -26,14 +27,8 @@ export function ReleaseEditor({ initialData = null, onSave, isSubmitting = false
     releaseDate: initialData?.releaseDate || new Date().toISOString().split('T')[0],
     owner: initialData?.owner || '',
     qaSummary: initialData?.qaSummary || '',
-    items: initialData?.items || [
-      { id: 'item_1', code: 'REL-001', category: 'feature', title: '', description: '', displayOrder: 1 },
-      { id: 'item_2', code: 'REL-002', category: 'bug_fix', title: '', description: '', displayOrder: 2 },
-      { id: 'item_3', code: 'REL-003', category: 'affected_user_group', title: 'All Web & Mobile Users', description: '', displayOrder: 3 }
-    ],
-    evidence: initialData?.evidence || [
-      { id: 'ev_1', code: 'QA-001', type: 'test_suite', title: 'Regression Test Suite', details: 'Passed 100% of core regression test scenarios.', status: 'passed' }
-    ]
+    items: initialData?.items || [],
+    evidence: initialData?.evidence || []
   });
 
   const [activeTab, setActiveTab] = useState('metadata');
@@ -55,8 +50,37 @@ export function ReleaseEditor({ initialData = null, onSave, isSubmitting = false
       setActiveTab('metadata');
       return;
     }
+
+    // Prune blank items where title was not provided
+    const validItems = (formData.items || [])
+      .filter(item => item && item.title && item.title.trim().length > 0)
+      .map((item, idx) => ({
+        ...item,
+        title: item.title.trim(),
+        description: (item.description || '').trim(),
+        displayOrder: idx + 1
+      }));
+
+    // Prune blank QA evidence records where title or details are missing
+    const validEvidence = (formData.evidence || [])
+      .filter(ev => ev && ev.title && ev.title.trim().length > 0 && ev.details && ev.details.trim().length > 0)
+      .map(ev => ({
+        ...ev,
+        title: ev.title.trim(),
+        details: ev.details.trim()
+      }));
+
     setErrorMsg(null);
-    onSave(formData);
+    onSave({
+      ...formData,
+      name: formData.name.trim(),
+      version: formData.version.trim(),
+      description: (formData.description || '').trim(),
+      owner: (formData.owner || '').trim(),
+      qaSummary: (formData.qaSummary || '').trim(),
+      items: validItems,
+      evidence: validEvidence
+    });
   };
 
   const tabs = [
@@ -79,36 +103,18 @@ export function ReleaseEditor({ initialData = null, onSave, isSubmitting = false
         </div>
       )}
 
-      {/* Tabs Header */}
-      <div className="flex border-b border-surface-border overflow-x-auto bg-white rounded-t-xl px-2">
-        {tabs.map(tab => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap transition-colors cursor-pointer ${
-                isActive
-                  ? 'border-saffron-500 text-saffron-900 bg-saffron-50/50 font-semibold'
-                  : 'border-transparent text-ink-secondary hover:text-ink-primary hover:border-slate-300'
-              }`}
-            >
-              <Icon className={`w-4 h-4 ${isActive ? 'text-saffron-600' : 'text-slate-400'}`} />
-              <span>{tab.label}</span>
-              {tab.count !== undefined && (
-                <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] bg-slate-100 text-slate-700 font-mono">
-                  {tab.count}
-                </span>
-              )}
-            </button>
-          );
-        })}
+      {/* Tabs Header with Horizontal Auto-Scroll & Controls */}
+      <div className="bg-slate-50/70 p-1.5 rounded-xl border border-surface-border shadow-2xs">
+        <HorizontalScrollTabs
+          tabs={tabs}
+          activeTab={activeTab}
+          onSelectTab={(tabId) => setActiveTab(tabId)}
+          autoScrollSpeed={0.45}
+        />
       </div>
 
       {/* Tab Contents */}
-      <div className="bg-white rounded-b-xl border border-t-0 border-surface-border p-6 shadow-xs min-h-[350px]">
+      <div className="bg-white rounded-xl border border-surface-border p-6 shadow-xs min-h-[350px]">
         {/* Tab 1: Metadata */}
         {activeTab === 'metadata' && (
           <div className="space-y-4 max-w-3xl">

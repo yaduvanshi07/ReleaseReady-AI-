@@ -99,4 +99,25 @@ describe('Frontend Component Tests', () => {
     expect(screen.getByText('Accept Statement')).toBeInTheDocument();
     expect(screen.getByText('Reject')).toBeInTheDocument();
   });
+
+  it('renders LoginPage with Auto-Fill demo buttons and populates credentials', async () => {
+    const { LoginPage } = await import('../pages/LoginPage');
+    const { AuthProvider } = await import('../context/AuthContext');
+    const { MemoryRouter } = await import('react-router-dom');
+
+    render(
+      <AuthProvider>
+        <MemoryRouter>
+          <LoginPage />
+        </MemoryRouter>
+      </AuthProvider>
+    );
+
+    const autoFillBtn = screen.getByText(/Auto-fill Lead Engineer/i);
+    expect(autoFillBtn).toBeInTheDocument();
+    
+    fireEvent.click(autoFillBtn);
+    expect(screen.getByDisplayValue('demo@releaseready.ai')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Password123!')).toBeInTheDocument();
+  });
 });

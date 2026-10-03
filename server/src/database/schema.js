@@ -97,10 +97,22 @@ export function initializeSchema(db) {
       FOREIGN KEY (statement_id) REFERENCES generated_statements(id) ON DELETE CASCADE
     );
 
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'engineer',
+      avatar TEXT,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+
     CREATE INDEX IF NOT EXISTS idx_items_release_id ON release_items(release_id);
     CREATE INDEX IF NOT EXISTS idx_evidence_release_id ON qa_evidence(release_id);
     CREATE INDEX IF NOT EXISTS idx_snapshots_release_id ON release_snapshots(release_id);
     CREATE INDEX IF NOT EXISTS idx_analyses_release_id ON ai_analyses(release_id);
     CREATE INDEX IF NOT EXISTS idx_statements_release_id ON generated_statements(release_id);
+    CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
   `);
 }

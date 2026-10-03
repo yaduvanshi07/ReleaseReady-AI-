@@ -1,8 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import passport from 'passport';
 import { createApiRouter } from './routes/index.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { configurePassport } from './auth/passport.js';
 
 dotenv.config();
 
@@ -12,6 +14,9 @@ dotenv.config();
  */
 export function createApp(options = {}) {
   const app = express();
+
+  // Configure Passport strategies
+  configurePassport(options.db);
 
   // Security and CORS configuration for Render + Vercel
   const configuredClientUrls = (process.env.CLIENT_URL || '')
@@ -52,6 +57,9 @@ export function createApp(options = {}) {
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
   }));
+
+  // Passport middleware
+  app.use(passport.initialize());
 
   // JSON request body parser with safe limit
   app.use(express.json({ limit: '2mb' }));

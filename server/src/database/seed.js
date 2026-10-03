@@ -1,17 +1,49 @@
 import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
 
 /**
- * Seeds the database with rich example release packages if empty.
+ * Seeds the database with rich example release packages and demo users if empty.
  * @param {import('better-sqlite3').Database} db
  */
 export function seedDatabase(db) {
+  const insertUser = db.prepare(`
+    INSERT OR IGNORE INTO users (id, name, email, password_hash, role, avatar, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  const now = new Date().toISOString();
+  const demoSalt = bcrypt.genSaltSync(10);
+  const defaultPasswordHash = bcrypt.hashSync('Password123!', demoSalt);
+
+  // Seed default demo user accounts
+  insertUser.run(
+    'usr_seed_demo_lead',
+    'Alex Rivera (Engineering Lead)',
+    'demo@releaseready.ai',
+    defaultPasswordHash,
+    'engineer',
+    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
+    now,
+    now
+  );
+
+  insertUser.run(
+    'usr_seed_demo_qa',
+    'Sarah Connor (QA Lead)',
+    'reviewer@releaseready.ai',
+    defaultPasswordHash,
+    'qa_lead',
+    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80',
+    now,
+    now
+  );
+
   const count = db.prepare('SELECT COUNT(*) as c FROM releases').get().c;
   if (count > 0) {
     return;
   }
 
   const releaseId = 'rel_seed_001';
-  const now = new Date().toISOString();
 
   const insertRelease = db.prepare(`
     INSERT INTO releases (id, name, version, description, release_date, owner, qa_summary, created_at, updated_at)

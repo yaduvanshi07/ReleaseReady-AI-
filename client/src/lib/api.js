@@ -1,16 +1,41 @@
 /**
  * Frontend API client for ReleaseReady AI.
- * Supports dynamic remote backend URLs (e.g. Vercel -> Render) and local fallback.
+ * Supports dynamic remote backend URLs (e.g. Vercel -> Render), local fallback, and JWT authentication.
  */
 const rawApiUrl = import.meta.env.VITE_API_URL || '';
 const API_BASE = rawApiUrl
   ? (rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl.replace(/\/+$/, '')}/api`)
   : '/api';
 
+export const AUTH_TOKEN_KEY = 'releaseready_auth_token';
+
+export function getStoredToken() {
+  try {
+    return localStorage.getItem(AUTH_TOKEN_KEY);
+  } catch (e) {
+    return null;
+  }
+}
+
+export function setStoredToken(token) {
+  try {
+    if (token) {
+      localStorage.setItem(AUTH_TOKEN_KEY, token);
+    } else {
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+    }
+  } catch (e) {
+    // Ignore storage errors
+  }
+}
+
 async function request(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`;
+  const token = getStoredToken();
+
   const headers = {
     'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
     ...(options.headers || {})
   };
 
@@ -44,6 +69,12 @@ async function request(endpoint, options = {}) {
 }
 
 export const api = {
+  // Authentication (Passport.js)
+  login: (credentials) => request('/auth/login', { method: 'POST', body: JSON.stringify(credentials) }),
+  register: (userData) => request('/auth/register', { method: 'POST', body: JSON.stringify(userData) }),
+  demoLogin: (role = 'engineer') => request('/auth/demo', { method: 'POST', body: JSON.stringify({ role }) }),
+  getMe: () => request('/auth/me'),
+
   // Health
   getHealth: () => request('/health'),
 

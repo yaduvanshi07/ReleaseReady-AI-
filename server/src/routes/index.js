@@ -4,6 +4,7 @@ import { createVersionRoutes } from './versionRoutes.js';
 import { createAnalysisRoutes } from './analysisRoutes.js';
 import { createReviewRoutes } from './reviewRoutes.js';
 import { createBriefRoutes } from './briefRoutes.js';
+import { createAuthRouter } from './authRoutes.js';
 import { ReleaseRepository } from '../repositories/releaseRepository.js';
 import { VersionRepository } from '../repositories/versionRepository.js';
 import { ReviewRepository } from '../repositories/reviewRepository.js';
@@ -26,6 +27,9 @@ export function createApiRouter(db = null, customAiService = null) {
       aiConfigured: Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim().length > 0)
     });
   });
+
+  // Mount Authentication (Passport)
+  router.use('/auth', createAuthRouter(db));
 
   // Mount release CRUD & validation
   router.use('/releases', createReleaseRoutes(releaseRepo));

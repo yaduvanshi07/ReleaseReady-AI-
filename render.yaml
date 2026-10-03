@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: release-ready-backend
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: npm --prefix server install
+    startCommand: npm --prefix server start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CLIENT_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: DATABASE_PATH
+        value: ./data/release-ready.sqlite

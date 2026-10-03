@@ -1,7 +1,11 @@
 /**
  * Frontend API client for ReleaseReady AI.
+ * Supports dynamic remote backend URLs (e.g. Vercel -> Render) and local fallback.
  */
-const API_BASE = '/api';
+const rawApiUrl = import.meta.env.VITE_API_URL || '';
+const API_BASE = rawApiUrl
+  ? (rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl.replace(/\/+$/, '')}/api`)
+  : '/api';
 
 async function request(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`;

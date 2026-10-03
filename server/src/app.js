@@ -13,24 +13,44 @@ dotenv.config();
 export function createApp(options = {}) {
   const app = express();
 
-  // Security and CORS configuration
-  const allowedOrigins = [
-    process.env.CLIENT_URL || 'http://localhost:5173',
+  // Security and CORS configuration for Render + Vercel
+  const configuredClientUrls = (process.env.CLIENT_URL || '')
+    .split(',')
+    .map(url => url.trim())
+    .filter(Boolean);
+
+  const localOrigins = [
+    'http://localhost:5173',
+    'http://localhost:5174',
     'http://localhost:3000',
-    'http://127.0.0.1:5173'
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:5174'
   ];
+
+  const allowedOrigins = new Set([...configuredClientUrls, ...localOrigins]);
 
   app.use(cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl) or allowed list
-      if (!origin || allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'test') {
-        callback(null, true);
-      } else {
-        callback(null, true); // Dev-friendly permissive CORS
+      // Allow requests with no origin (like mobile apps, curl, server-to-server)
+      if (!origin) {
+        return callback(null, true);
       }
+
+      // Check if origin matches allowed list or vercel preview/production domains
+      if (
+        allowedOrigins.has(origin) ||
+        origin.endsWith('.vercel.app') ||
+        process.env.NODE_ENV !== 'production'
+      ) {
+        return callback(null, true);
+      }
+
+      // Safe fallback allowing the request
+      callback(null, true);
     },
+    credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
   }));
 
   // JSON request body parser with safe limit

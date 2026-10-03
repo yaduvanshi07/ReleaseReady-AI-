@@ -1,11 +1,11 @@
-# ReleaseReady AI 🚀
+# ReleaseReady AI 
 ### Full-Stack AI-Powered Release Communication & Readiness Assistant
 
 ReleaseReady AI is a developer-tool SaaS web application designed for engineering leads, QA engineers, release managers, and product owners to prepare accurate, evidence-backed software release briefs.
 
 ---
 
-## 🎨 Visual Design & Brand Identity
+##  Visual Design & Brand Identity
 The interface is designed with a **saffron-and-grey** color palette:
 - **Primary Saffron:** `#F59E0B`
 - **Deep Saffron:** `#D97706`
@@ -19,7 +19,7 @@ The interface is designed with a **saffron-and-grey** color palette:
 
 ---
 
-## 🏗️ Architecture & Technology Stack
+##  Architecture & Technology Stack
 
 - **Pure JavaScript (ES6+ / ES Modules)** — Strictly zero TypeScript files (`.js`, `.jsx`).
 - **Frontend:** React 18, Vite 6, Tailwind CSS 3, React Router 6, Lucide React icons.
@@ -64,7 +64,7 @@ release-ready-ai/
 
 ---
 
-## ⚡ Key Features
+##  Key Features
 
 ### 1. Deterministic Readiness Validation
 - Inspects all 7 core sections:
@@ -175,7 +175,3 @@ npm run build
 | `GET` | `/api/releases/:id/brief` | Compile 16-section release brief (JSON & Markdown) |
 
 ---
-
-## 🛡️ Safety & Limitations
-- **Assessment Scope:** Single-tenant developer tool designed for release communication preparation.
-- **No Direct Deployment:** The AI assistant strictly produces advisory documentation and never connects to production infrastructure, Git providers, or deployment pipelines.

@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary-saffron: #F59E0B;
+    --deep-saffron: #D97706;
+    --soft-saffron: #FEF3C7;
+    --bg-app: #F5F6F8;
+    --bg-card: #FFFFFF;
+    --border-color: #E5E7EB;
+  }
+
+  body {
+    background-color: #F5F6F8;
+    color: #202124;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Subtle Saffron Brand Gradients */
+.bg-saffron-subtle-gradient {
+  background: linear-gradient(135deg, rgba(254, 243, 199, 0.6) 0%, rgba(245, 246, 248, 0.9) 100%);
+}
+
+.bg-saffron-hero-gradient {
+  background: linear-gradient(120deg, #FFFFFF 0%, #FEF3C7 50%, #F5F6F8 100%);
+}
+
+.text-gradient-saffron {
+  background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Print Styles for Release Briefs */
+@media print {
+  aside, nav, .no-print, button, .action-buttons {
+    display: none !important;
+  }
+  
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .print-container {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "release-ready-ai",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "start": "node server/src/server.js",
+    "build": "npm --prefix client run build",
+    "test": "npm --prefix server test && npm --prefix client test",
+    "test:server": "npm --prefix server test",
+    "test:client": "npm --prefix client test"
+  },
+  "keywords": [
+    "release-management",
+    "ai",
+    "evidence-traceability",
+    "releaseready"
+  ],
+  "author": "",
+  "license": "ISC"
+}
